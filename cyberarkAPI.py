@@ -1,46 +1,69 @@
 import datetime
-from typing import Any
 
 import requests
 
 
 class cyberarkAPI:
-    appID = safe = actName = folder = host = aimURL = cpmDisableReason = None
+    appID = safe = actName = folder = host = None
+    aimURL = cpmDisableReason = None
     cpmDisable = False
     cpmStatus = "success"
 
     HEADERS = {'content-type': 'application/json'}
     querystring = aimData = dict()
 
-    def __new__(cls):
-        return super().__new__(cls)
+    # def __new__(cls):
+    # return super().__new__(cls)
 
-    def __init__(self, appid="", safe="", actname="", host="", folder="Root"):
+    def __init__(self, appid, safe, actname, host, folder="Root"):
+        super().__init__()
         self.appID = appid
         self.safe = safe
         self.actName = actname
         self.host = host
-        self.aimURL = "https://" + self.host + "/AIMWebService/api/Accounts"
         self.folder = folder
-        self.querystring = {"AppID": self.appID, "Safe": self.safe, "Folder": self.folder, "Object": self.actName}
 
+    @appID.setter
     def setappID(self, appid):
         self.appID = appid
 
+    @safe.setter
     def setSafe(self, safe):
         self.safe = safe
 
+    @actName.setter
     def setActName(self, actname):
         self.actName = actname
 
+    @folder.setter
     def setFolder(self, folder):
         self.folder = folder
 
+    @host.setter
     def setHost(self, host):
         self.host = host
+        self.setaimURL(host)
+
+    @_aimURL.setter
+    def setaimURL(self, aimurl):
+        self._aimURL = aimurl
+
+    @querystring.setter
+    def setquerystring(self, querystring):
+        self._querystring = querystring
+
+    @aimData.setter
+    def setaimData(self, aimdata):
+        self._aimData = aimdata
+
+    def getquerystring(self):
+        return {"AppID": self.appID, "Safe": self.safe, "Folder": self.folder, "Object": self.actName}
+
+    def getaimURL(self):
+        return "https://" + self.host + "/AIMWebService/api/Accounts"
 
     def getaimResponse(self):
-        response = requests.request("GET", self.aimURL, headers=self.HEADERS, params=self.querystring)
+        response = requests.request("GET", self._aimURL, headers=self.HEADERS, params=self._querystring)
 
         if response.status_code in [200, 400, 403, 404]:
             return response
