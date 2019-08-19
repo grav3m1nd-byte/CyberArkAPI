@@ -13,8 +13,7 @@ class CyberarkAPI:
         self.appID = appid
         self.safe = safe
         self.actName = actname
-        # self.host = host
-        self.setHost(host)
+        self.host = host
         self.folder = folder
 
     def setappID(self, appid):
