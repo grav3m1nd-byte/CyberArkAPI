@@ -1,28 +1,21 @@
 import datetime
-from typing import Any
 
 import requests
 
 
-class cyberarkAPI:
-    appID = safe = actName = folder = host = aimURL = cpmDisableReason = None
-    cpmDisable = False
-    cpmStatus = "success"
-
-    HEADERS = {'content-type': 'application/json'}
-    querystring = aimData = dict()
-
-    def __new__(cls):
-        return super().__new__(cls)
+class CyberarkAPI:
+    __cpmDisableReason, __cpmStatus, __aimURL = "", "success", "https://"
+    __cpmDisable = False
+    __aimData = dict()
 
     def __init__(self, appid="", safe="", actname="", host="", folder="Root"):
+        super().__init__()
         self.appID = appid
         self.safe = safe
         self.actName = actname
-        self.host = host
-        self.aimURL = "https://" + self.host + "/AIMWebService/api/Accounts"
+        # self.host = host
+        self.setHost(host)
         self.folder = folder
-        self.querystring = {"AppID": self.appID, "Safe": self.safe, "Folder": self.folder, "Object": self.actName}
 
     def setappID(self, appid):
         self.appID = appid
@@ -38,9 +31,24 @@ class cyberarkAPI:
 
     def setHost(self, host):
         self.host = host
+        self.setaimURL(host)
+
+    def getHost(self):
+        return self.host
+
+    def setaimURL(self, host):
+        self.__aimURL = "https://" + host + "/AIMWebService/api/Accounts"
+
+    def getquerystring(self):
+        return {"AppID": self.appID, "Safe": self.safe, "Folder": self.folder, "Object": self.actName}
+
+    def getaimURL(self):
+        return self.__aimURL
 
     def getaimResponse(self):
-        response = requests.request("GET", self.aimURL, headers=self.HEADERS, params=self.querystring)
+        HEADERS = {'content-type': 'application/json'}
+        querystring = self.getquerystring()
+        response = requests.request("GET", self.__aimURL, headers=HEADERS, params=querystring)
 
         if response.status_code in [200, 400, 403, 404]:
             return response
@@ -48,35 +56,35 @@ class cyberarkAPI:
             response.raise_for_status()
 
     def getaimData(self):
-        self.aimData = self.getaimResponse().json()
-        return self.aimData
+        self.__aimData = self.getaimResponse().json()
+        return self.__aimData
 
     def getUsername(self):
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return self.aimData['UserName']
+            return self.__aimData['UserName']
 
     def getPassword(self):
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return self.aimData['Content']
+            return self.__aimData['Content']
 
     def getAddress(self):
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return self.aimData['Address']
+            return self.__aimData['Address']
 
     def getCPMStatus(self):
         if self.isAIMError():
             return self.getAIMError()
-        elif "CPMStatus" in self.aimData.keys() and self.aimData['CPMStatus'] == "success":
+        elif "CPMStatus" in self.__aimData.keys() and self.__aimData['CPMStatus'] == "success":
             self.cpmStatus = "success"
             return self.cpmStatus
-        elif "CPMStatus" in self.aimData.keys() and self.aimData['CPMStatus'] != "success":
-            self.cpmStatus = self.aimData['CPMStatus']
+        elif "CPMStatus" in self.__aimData.keys() and self.__aimData['CPMStatus'] != "success":
+            self.cpmStatus = self.__aimData['CPMStatus']
             return self.cpmStatus
         else:
             pass
@@ -84,19 +92,22 @@ class cyberarkAPI:
     def getCPMDisabled(self):
         if self.isAIMError():
             return self.getAIMError()
-        elif "CPMDisabled" in self.aimData.keys():
-            self.cpmDisableReason = self.aimData['CPMDisabled']
-            self.cpmDisable = True
-            return self.cpmDisable
+        elif "CPMDisabled" in self.__aimData.keys():
+            self.__cpmDisableReason = self.__aimData['CPMDisabled']
+            self.__cpmDisable = True
+            return self.__cpmDisable
         else:
-            self.cpmDisable = False
-            return self.cpmDisable
+            self.__cpmDisable = False
+            return self.__cpmDisable
+
+    def getCPMDisabledReason(self):
+        return self.__cpmDisableReason
 
     def getLastSuccessChange(self):
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return datetime.datetime.fromtimestamp(int(self.aimData['LastSuccessChange']))
+            return datetime.datetime.fromtimestamp(int(self.__aimData['LastSuccessChange']))
 
     def getNextChange(self):
         if self.isAIMError():
@@ -114,7 +125,7 @@ class cyberarkAPI:
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return datetime.datetime.fromtimestamp(int(self.aimData['LastSuccessReconciliation']))
+            return datetime.datetime.fromtimestamp(int(self.__aimData['LastSuccessReconciliation']))
 
     def getLastSuccessReconciliationTS(self):
         if self.isAIMError():
@@ -126,7 +137,7 @@ class cyberarkAPI:
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return datetime.datetime.fromtimestamp(int(self.aimData['LastSuccessVerification']))
+            return datetime.datetime.fromtimestamp(int(self.__aimData['LastSuccessVerification']))
 
     def getNextVerification(self):
         if self.isAIMError():
@@ -144,23 +155,23 @@ class cyberarkAPI:
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return self.aimData['LastTask']
+            return self.__aimData['LastTask']
 
     def getPasswordChangeInProcess(self):
         if self.isAIMError():
             return self.getAIMError()
         else:
-            return bool(self.aimData['PasswordChangeInProcess'])
+            return bool(self.__aimData['PasswordChangeInProcess'])
 
     def isAIMError(self):
-        if "ErrorCode" in self.aimData.keys():
+        if "ErrorCode" in self.__aimData.keys():
             return True
         else:
             return False
 
     def getAIMError(self):
-        if "ErrorCode" in self.aimData.keys():
-            raise Exception("ErrorCode: " + self.aimData['ErrorCode'] + "-" + self.aimData['ErrorMsg'])
+        if "ErrorCode" in self.__aimData.keys():
+            raise Exception("ErrorCode: " + self.__aimData['ErrorCode'] + "-" + self.__aimData['ErrorMsg'])
         else:
             pass
 
