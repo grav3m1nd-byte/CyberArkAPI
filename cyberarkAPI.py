@@ -1,7 +1,6 @@
 import datetime
 
 import requests
-from requests import HTTPError
 
 
 # Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows the creating
@@ -83,8 +82,21 @@ class CyberarkAPI:
             if response.status_code not in [200, 400, 403, 404]:  # If the status code is not in the list, a HTTP
                 # request exception will be raised for the status code.
                 response.raise_for_status()
-        except HTTPError as http_err:  # Raise HTTP Error Exceptions if something else occurred.
-            print(f'HTTP error occurred: {http_err}')
+
+        except requests.exceptions.HTTPError as http_err:  # Raise HTTP Error Exceptions if something else occurred.
+            print(f'ERROR: {http_err}')
+
+        except requests.exceptions.ConnectTimeout as conn_timeout_err:  # Raise Connection Timeout Error Exceptions
+            print(f'ERROR: {conn_timeout_err}')
+
+        except requests.exceptions.SSLError as ssl_err:  # Raise SSL Error Exceptions
+            print(f'ERROR: {ssl_err}')
+
+        except requests.exceptions.ConnectionError as conn_err:  # Raise Connection Error Exceptions
+            print(f'ERROR: {conn_err}')
+
+        except requests.exceptions.InvalidURL as badurl_err:  # Raise Invalid URL Error Exceptions
+            print(f'ERROR: {badurl_err}')
 
         else:  # If no exception is raised, and status codes are 200, 400, 403, or 404, return the response object.
             if response.status_code in [200, 400, 403, 404]:
@@ -266,6 +278,6 @@ class CyberarkAPI:
     # code 400, 403, or 404.
     def getAIMError(self):
         if "ErrorCode" in self.__aimData.keys():
-            raise Exception("ErrorCode: " + self.__aimData['ErrorCode'] + "-" + self.__aimData['ErrorMsg'])
+            raise Exception("CyberArk AIM ErrorCode: " + self.__aimData['ErrorCode'] + "-" + self.__aimData['ErrorMsg'])
         else:
             pass
