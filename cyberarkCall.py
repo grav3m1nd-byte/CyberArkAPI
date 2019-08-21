@@ -4,31 +4,33 @@ import sys
 from cyberarkAPI import CyberarkAPI
 
 
-# def call(cyberarkAPI):
+# The cyberarkCall.py code is only meant to show how to use the CyberArkAPI class. The main function relies on
+# receiving system arguments when running this script.
+# Each argument represents the following:
+#     -H, --Host=<CyberArk_Host>
+#     -a, --APPID=<APPID>
+#     -s, --Safe=<safe_name>
+#     -o, --Obj=<object_name>
+#     -f, --folder=<folder> (optional)
+#     -h, help, --help
+#
+#     Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)
 
 
 def main(argv):
-    # host = appid = safe = obj = folder = ""
     account1 = CyberarkAPI()
 
     try:
-        # opts, args = getopt.getopt(argv, "hf:nHaso:", ["num=", "Host=", "APPID=", "Safe=", "Obj=", "folder=", "help"])
         opts, args = getopt.getopt(sys.argv[1:], "H:a:s:o:f:h", ["Host=", "APPID=", "Safe=", "Obj=", "folder=", "help"])
 
     except getopt.GetoptError:
-        # print("Usage: cyberarkCall.py -n <account_numbers> -H <CyberArk_Host> -a <APPID> -s <safe_name> -o "
-        # "<object_name> -f <folder (optional)")
         print("Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)")
         sys.exit(2)
     for opt, arg in opts:
         if opt in ('-h', "help", "--help"):
-            # print("Usage: cyberarkCall.py -n <account_numbers> -H <CyberArk_Host> -a <APPID> -s <safe_name> -o "
-            # "<object_name> -f <folder (optional)")
-            print(
-                "Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)")
+            print("Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> ("
+                  "opt)")
             sys.exit()
-            # elif opt in ("-n", "--num"):
-            # inputfile = arg
         elif opt in ("-H", "--Host"):
             account1.setHost(arg)
         elif opt in ("-a", "--APPID"):
@@ -39,29 +41,21 @@ def main(argv):
             account1.actName = arg
         elif opt in ("-o", "--folder"):
             account1.folder = arg
-    #
-    #     account1 = cyberarkAPI(appid, safe, obj, host)
 
-    # account1.setappID("test_AIM")
-    # account1.setSafe("Priv_BerriosJN")
-    # account1.setActName("OS-WinDomain-US1-BerriosJN")
-    # account1.setHost("cyberark.autonation.com")
-    # account1.host = "cyberark.autonation.com"
-    # account1.setaimURL(account1.host)
-    # account1.setaimURL(account1.getHost())
+    print("Host: " + account1.getHost(), "\nAIM URL: " + account1.getaimURL(),
+          "\nParameters: " + "\n\tAppID: " + account1.appID, "\n\tSafe: " + account1.safe,
+          "\n\tFolder: " + account1.folder, "\n\tObject: " + account1.actName)
 
-    # print(account1.getaimURL())
-    print(account1.host, account1.getaimURL(), account1.getquerystring())
-    # print(account1.querystring)
-    # print(account1.getaimResponse().status_code)
-    # account1.getaimData()
-    # print(account1.aimData)
-    #
-    # print(account1.getUsername(),": ", account1.getPassword())
-    #
-    # print("\nPrevious:", account1.getLastSuccessChangeTS(), "\nNext:", account1.getNextChange().isoformat())
+    account1.getaimData()
+    account1.getAIMError()
+    print('\nUsername: ' + account1.getUsername(), "\nPassword: " + account1.getPassword())
+    if account1.getCPMDisabled():
+        print("Account Management Disable: " + account1.getCPMDisabledReason())
+    else:
+        print("\nPrevious:", account1.getLastSuccessChangeTS(), "\nNext:", account1.getNextChange().isoformat())
+
+    sys.exit()
 
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
