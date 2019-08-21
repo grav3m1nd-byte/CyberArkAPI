@@ -1,10 +1,10 @@
 import getopt
 import sys
 
-from cyberarkAPI import CyberarkAPI
+from cyberarkAIM import CyberarkAIM
 
 
-# The cyberarkCall.py code is only meant to show how to use the CyberArkAPI class. The main function relies on
+# The usageSample.py code is only meant to show how to use the CyberArkAIM class. The main function relies on
 # receiving system arguments when running this script.
 # Each argument represents the following:
 #     -H, --Host=<CyberArk_Host>
@@ -14,22 +14,22 @@ from cyberarkAPI import CyberarkAPI
 #     -f, --folder=<folder> (optional)
 #     -h, help, --help
 #
-#     Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)
+#     Usage: usageSample.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)
 
 
 def main(argv):
-    account1 = CyberarkAPI()
+    account1 = CyberarkAIM()
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "H:a:s:o:f:h", ["Host=", "APPID=", "Safe=", "Obj=", "folder=", "help"])
 
     except getopt.GetoptError:
-        print("Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)")
+        print("Usage: usageSample.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> (opt)")
         sys.exit(2)
     for opt, arg in opts:
         if opt in ('-h', "help", "--help"):
-            print("Usage: cyberarkCall.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder> ("
-                  "opt)")
+            print("Usage: usageSample.py -H <CyberArk_Host> -a <APPID> -s <safe_name> -o <object_name> -f <folder>"
+                  "(opt)")
             sys.exit()
         elif opt in ("-H", "--Host"):
             account1.setHost(arg)
