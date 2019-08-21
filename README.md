@@ -5,7 +5,7 @@ Building AIMWebService API Call "Framework"
  multiple objects, which in turn allows retrieving multiple accounts.
 
  Developed by Jorge Berrios
- Contact information: <berriosj@autonation.com>, <jxberrios@gmail.com>
+ \n\tContact information: <berriosj@autonation.com>, <jxberrios@gmail.com>
 
  Usage:
    1. Create instance: CyberarkAIM() - It can received values for AppID, Safe, Object and CyberArk DNS Name as
