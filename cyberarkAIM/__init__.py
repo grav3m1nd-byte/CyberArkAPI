@@ -7,7 +7,9 @@ import requests
 # Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows the creating
 # multiple objects, which in turn allows retrieving multiple accounts.
 #
-# Developed by Jorge Berrios <berriosj@autonation.com> <jxberrios@gmail.com>
+#  Developed by Jorge Berrios 
+#   Contact information: <berriosj@autonation.com>, <jxberrios@gmail.com>
+#
 #
 # Usage:
 #   1. Create instance: CyberarkAIM() - It can received values for AppID, Safe, Object and CyberArk DNS Name as
