@@ -4,7 +4,7 @@ import sys
 import requests
 
 
-# Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows the creating
+# Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows creating
 # multiple objects, which in turn allows retrieving multiple accounts.
 #
 # Developed by Jorge Berrios <berriosj@autonation.com> <jxberrios@gmail.com>
