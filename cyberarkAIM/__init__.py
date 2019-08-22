@@ -4,7 +4,7 @@ import sys
 import requests
 
 
-# Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows the creating
+# Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows creating
 # multiple objects, which in turn allows retrieving multiple accounts.
 #
 #  Developed by Jorge Berrios 
@@ -23,7 +23,7 @@ import requests
 #   5. Set CyberArk DNS name: assign the string value to the public method setHost from the newly created
 #       CyberAIM Object.
 #
-# Retrieving Values through get methods:
+# Retrieving data through get methods:
 #   1. getHost: Returns the host or DNS name of CyberArk IF set.
 #   2. getaimURL: Returns the composed CyberArk AIMWebService URL
 #   3. getaimData: calls the private method responsible for the API call, and returns the value from the local attribute
