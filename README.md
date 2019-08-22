@@ -1,10 +1,10 @@
 # CyberArkAPI Project
 Building AIMWebService API Call "Framework"
 
- Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows the creating
+ Class created as "framework" to perform CyberArk AIMWebService API Calls. This framework allows creating
  multiple objects, which in turn allows retrieving multiple accounts.
 
- Developed by Jorge Berrios <berriosj@autonation.com> <jxberrios@gmail.com>
+ Developed by Jorge Berrios - Contact information: <berriosj@autonation.com>, <jxberrios@gmail.com>
 
  Usage:
    1. Create instance: CyberarkAIM() - It can received values for AppID, Safe, Object and CyberArk DNS Name as
@@ -18,7 +18,7 @@ Building AIMWebService API Call "Framework"
    5. Set CyberArk DNS name: assign the string value to the public method setHost from the newly created
        CyberAIM Object.
 
- Retrieving Values through get methods:
+ Retrieving values through get methods:
    1. getHost: Returns the host or DNS name of CyberArk IF set.
    2. getaimURL: Returns the composed CyberArk AIMWebService URL
    3. getaimData: calls the private method responsible for the API call, and returns the value from the local attribute
