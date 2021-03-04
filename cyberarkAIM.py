@@ -192,8 +192,6 @@ class CyberarkAIM:
         elif "CPMStatus" in self.__aimData.keys() and self.__aimData['CPMStatus'] != "success":
             self.__cpmStatus = self.__aimData['CPMStatus']
             return self.__cpmStatus
-        else:
-            pass
 
     # Public method to retrieve the CPMDisabled key value from __aimData as long as isAIMError() returns false. The
     # CPMDisabled key value returns the reason given to disable the account automatic management if any was given.
@@ -321,5 +319,4 @@ class CyberarkAIM:
             aim_err = self.__aimData['ErrorCode'] + "-" + self.__aimData['ErrorMsg']
             print(f'\nCyberArk AIM Error: {aim_err}')
             sys.exit(2)
-        else:
-            pass
+        
