@@ -3,19 +3,20 @@ on:
   push:
     branches:
       - master
-      - test
+      - code
+      - fixes
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
   scan:
-    name: SonarCloud
+    name: SonarCloud Test
     runs-on: ubuntu-latest
     env:
       SONAR_URL: https://sonarcloud.io #Sonarcloud Host
       SONAR_ORG: grav3m1nd-byte #Name of the Organization within Sonarcloud
 
       # Change value of SONAR_PROJECTKEY accordingly
-      SONAR_PROJECTKEY: grav3m1nd-byte_DVWA # Sonarcloud ProjectKey to scan
+      SONAR_PROJECTKEY: grav3m1nd-byte_CyberArkAPI # Sonarcloud ProjectKey to scan
     steps:
       # Installing .Net as required by dotnet-sonarscanner
       - name: Setup .Net
