@@ -1,0 +1,88 @@
+name: SonarCloud Test Scan
+on:
+  push:
+    branches:
+      - master
+      - code
+      - fixes
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  scan:
+    name: SonarCloud Test
+    runs-on: ubuntu-latest
+    env:
+      SONAR_URL: https://sonarcloud.io #Sonarcloud Host
+      SONAR_ORG: grav3m1nd-byte #Name of the Organization within Sonarcloud
+
+      # Change value of SONAR_PROJECTKEY accordingly
+      SONAR_PROJECTKEY: grav3m1nd-byte_CyberArkAPI # Sonarcloud ProjectKey to scan
+    steps:
+      # Installing .Net as required by dotnet-sonarscanner
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Speed-up analysis by caching the scanner workspace
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      # Speed-up analysis by caching the scanner installation
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      # Installing the .Net Sonarscanner
+      - name: Install .Net SonarCloud Scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          mkdir ~/.sonar && mkdir ~/.sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path ~/.sonar/scanner
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      # Running Sonarscanner against any non-C#/dotnet code
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.host.url=${{ env.SONAR_URL }}
+            -Dsonar.organization=${{ env.SONAR_ORG }}
+            -Dsonar.projectKey=${{ env.SONAR_PROJECTKEY }}
+            -Dsonar.verbose=true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
+      #      - name: Add GitHub packages as NuGet source
+      #        working-directory: ./src
+      #        run: dotnet nuget add source https://nuget.pkg.github.com/masterysystems/index.json -n mastery.west -u masterysystems -p ${{ secrets.MASTERYSYSTEMS_NPM_REGISTRY_TOKEN }} --store-password-in-clear-text
+      #
+      # Running dotnet-sonarscanner as a dotnet binary
+      #      - name: SonarCloud C#/.Net Scan
+      #        env:
+      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+      #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #        shell: bash
+      #        run: |
+      #          ~/.sonar/scanner/dotnet-sonarscanner begin /k:"${{ env.SONAR_PROJECTKEY }}" /o:"${{ env.SONAR_ORG }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ env.SONAR_URL }}" /d:sonar.cs.opencover.reportsPaths="opencover.xml" /d:sonar.verbose=true
+      #          dotnet restore ./src/
+      #          dotnet build ./src/Mastery.Commissions.API/Mastery.Commissions.API.csproj
+      #          dotnet build ./src/Mastery.Commissions.UnitTests/Mastery.Commissions.UnitTests.csproj
+      #          dotnet test ./src/Mastery.Commissions.sln /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage /p:Exclude="[Mastery.Commissions.API]*%2c[Mastery.Commissions.GraphQL.Client]*%2c[Mastery.Commissions.Database.Migrations]*" /p:ExcludeByFile="**/Mastery.Commissions.Entities/MasteryCommissionsDbContext.cs" --no-build
+      #          mv ./src/Mastery.Commissions.UnitTests/coverage.opencover.xml opencover.xml
+      #          ~/.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}" 
+      # 
