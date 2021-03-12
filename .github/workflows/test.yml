@@ -31,9 +31,6 @@ jobs:
 
       - name: echo current directory
         shell: bash
-        run: pwd
-
-      - name: echo new directory
-        working-directory: ../
-        shell: bash
-        run: tree
+        run: |
+          pwd
+          tree
