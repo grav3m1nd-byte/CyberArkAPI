@@ -23,4 +23,13 @@ jobs:
           echo "${{ env.SONAR_ORG }}"
           echo "${{ env.SONAR_PROJECTKEY }}"
           echo $HOME
-          
+      
+      - name: echo current working directory
+        working-directory: /home/runner
+        shell: bash
+        run: pwd
+
+      - name: echo new directory
+        working-directory: ../
+        shell: bash
+        run: pwd
