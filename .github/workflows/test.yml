@@ -1,0 +1,42 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  scan:
+    name: Test Job
+    runs-on: ubuntu-latest
+    env:
+      SONAR_URL: https://sonarcloud.io #Sonarcloud Host
+      SONAR_ORG: grav3m1nd-byte #Name of the Organization within Sonarcloud
+
+      # Change value of SONAR_PROJECTKEY accordingly
+      SONAR_PROJECTKEY: grav3m1nd-byte_CyberArkAPI # Sonarcloud ProjectKey to scan
+    steps:
+      - name: echo variables
+        shell: bash
+        run: |
+          echo "${{ env.SONAR_URL }}"
+          echo "${{ env.SONAR_ORG }}"
+          echo "${{ env.SONAR_PROJECTKEY }}"
+          echo $HOME
+      
+      - name: echo set working directory
+        working-directory: /home/runner
+        shell: bash
+        run: pwd
+
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      - name: echo current directory
+        shell: bash
+        run: |
+          pwd
+          tree
